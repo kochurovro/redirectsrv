@@ -7,4 +7,6 @@ require (
 	github.com/gin-gonic/gin v1.5.0
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/go-testfixtures/testfixtures/v3 v3.1.1
+	github.com/jinzhu/configor v1.1.1
+	github.com/pkg/errors v0.9.1
 )

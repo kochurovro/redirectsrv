@@ -7,7 +7,7 @@ import (
 	"github.com/bradfitz/gomemcache/memcache"
 )
 
-func pool(wg *sync.WaitGroup, cfg Config, tasksCh <-chan memcache.Item, client *memcache.Client) {
+func pool(wg *sync.WaitGroup, cfg *Config, tasksCh <-chan memcache.Item, client *memcache.Client) {
 	wg.Add(cfg.Workers)
 	for i := 0; i < cfg.Workers; i++ {
 		go worker(tasksCh, wg, client)

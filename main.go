@@ -13,26 +13,27 @@ import (
 )
 
 func main() {
-	var cfg Config
 	ctx := context.Background()
-	c := memcache.New("localhost:11211")
-	err := c.Ping()
+
+	cfg, err := initConfig()
 	if err != nil {
 		log.Fatal("main#memcached#init", err)
 		return
 	}
 
-	a, err := c.Get("a")
+	c := memcache.New(cfg.UrlMem)
+	err = c.Ping()
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("main#memcached#init", err)
+		return
 	}
-	log.Println(a)
+
 	var wg sync.WaitGroup
-	tasksCh := make(chan memcache.Item, 2)
+	tasksCh := make(chan memcache.Item, cfg.Workers)
 	defer close(tasksCh)
 	go pool(&wg, cfg, tasksCh, c)
 
-	repo := repositories.NewSqlUrlRepo(ctx, "user:password@(localhost:3306)/test")
+	repo := repositories.NewSqlUrlRepo(ctx, cfg.UrlDB)
 	r := gin.Default()
 	r.GET("/TestApp", redirectHandler(cfg, repo, c, tasksCh))
 

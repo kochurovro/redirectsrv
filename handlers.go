@@ -17,7 +17,7 @@ type Params struct {
 	PageURL  string  `form:"pageURL" binding:"required"`
 }
 
-func redirectHandler(cfg Config, repoURL *repositories.SqlUrlRepo, cache *memcache.Client, tasksCh chan<- memcache.Item) gin.HandlerFunc {
+func redirectHandler(cfg *Config, repoURL *repositories.SqlUrlRepo, cache *memcache.Client, tasksCh chan<- memcache.Item) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var p Params
 		err := c.Bind(&p)
@@ -72,7 +72,7 @@ func redirectHandler(cfg Config, repoURL *repositories.SqlUrlRepo, cache *memcac
 		task := memcache.Item{
 			Key:        p.Username,
 			Value:      []byte("a"),
-			Expiration: 100000,
+			Expiration: cfg.MemTTL,
 		}
 		tasksCh <- task
 	}
