@@ -3,9 +3,9 @@ package repositories
 import (
 	"context"
 	"database/sql"
-	"log"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/kochurovro/redirectsrv/domain"
 )
 
@@ -19,6 +19,10 @@ type SqlUrlRepo struct {
 
 func NewSqlUrlRepo(ctx context.Context, url string) *SqlUrlRepo {
 	db, err := sql.Open("mysql", url)
+	if err != nil {
+		panic(err)
+	}
+	err = db.Ping()
 	if err != nil {
 		panic(err)
 	}
@@ -38,16 +42,16 @@ func (s *SqlUrlRepo) Get(name string) (url string, err error) {
 			}
 			time.Sleep(10 * time.Second)
 		}
+
 	}()
 
 	go func() {
 		err = s.DB.QueryRow("SELECT url FROM urls WHERE name = ?", name).Scan(&url)
 		c <- false
 	}()
-	connFail := <-c
 
+	connFail := <-c
 	if err != nil {
-		log.Println("repositories#get", err)
 		if err == sql.ErrNoRows {
 			return url, domain.ErrRecordNotFound
 		}

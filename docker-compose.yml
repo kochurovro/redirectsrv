@@ -14,5 +14,23 @@ services:
       - '3306'
     volumes:
       - my-db:/var/lib/mysql
+  server:
+    image: nginx:alpine
+    container_name: server
+    volumes:
+      - ./nginx/conf.d/:/etc/nginx/conf.d/
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "80:80"
+      - "443:443"
+    network_mode: host
+  memcached:
+    image: launcher.gcr.io/google/memcached1
+    command:
+      - '-m 256'
+    ports:
+      - '11211:11211'
+    network_mode: host
 volumes:
   my-db:
