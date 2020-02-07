@@ -20,6 +20,7 @@ func main() {
 		log.Fatal("main#memcached#init", err)
 		return
 	}
+	log.Println("cfg#", cfg)
 
 	c := memcache.New(cfg.UrlMem)
 	err = c.Ping()

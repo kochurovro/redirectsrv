@@ -1,0 +1,4 @@
+urldb: user:password@(localhost:3306)/test
+urlmem: localhost:11211
+memttl: 10
+workers: 1
